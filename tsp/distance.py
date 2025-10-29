@@ -112,7 +112,7 @@ def build_candidate_lists(distance_matrix: np.ndarray,
     return candidates
 
 
-def get_candidate_size(n: int, is_euclidean: bool) -> int:
+def get_candidate_size(n: int, is_euclidean: bool, aggressive: bool = False) -> int:
     """
     Determine optimal candidate list size.
     
@@ -124,9 +124,11 @@ def get_candidate_size(n: int, is_euclidean: bool) -> int:
         Candidate list size
     """
     if is_euclidean:
-        return min(30, max(20, n // 8))
+        base = min(30, max(20, n // 8))
+        return min(45, base + (10 if aggressive else 0))
     else:
-        return min(40, max(25, n // 6))
+        base = min(40, max(25, n // 6))
+        return min(55, base + (10 if aggressive else 0))
 
 
 def precompute_distances(coords: np.ndarray) -> np.ndarray:
