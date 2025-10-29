@@ -206,7 +206,7 @@ def solve_tsp(input_file: str, output_file: str,
     if lk_actual_budget > 5.0:
         print(f"  Running multi-level optimization...")
         optimized = multi_level_optimization(best_tour, distance_matrix, 
-                                            candidates, lk_actual_budget, problem_type=problem_type)
+                                            candidates, lk_actual_budget)
         optimized_cost = tour_cost(optimized, distance_matrix)
         
         print(f"  LK optimization: {best_cost:.2f} → {optimized_cost:.2f}")
