@@ -1,3 +1,13 @@
+### Test Results (300-second time limit per instance)
+
+| Instance | Type | Cities | Initial Cost | Final Cost | Improvement | Time |
+|----------|------|--------|--------------|------------|-------------|------|
+| EUCLIDEAN_50 | Euclidean | 50 | 603.88 | **576.22** | 4.58% | 35.0s |
+| EUCLIDEAN_100 | Euclidean | 100 | 938.40 | **825.99** | 11.98% | 35.7s |
+| EUCLIDEAN_200 | Euclidean | 200 | 1227.08 | **1112.83** | 9.31% | 38.7s |
+| NON_EUCLIDEAN_50 | Non-Euclidean | 50 | 755.44 | **618.26** | 18.16% | 35.0s |
+| NON_EUCLIDEAN_100 | Non-Euclidean | 100 | 965.70 | **847.24** | 12.27% | 35.5s |
+| NON_EUCLIDEAN_200 | Non-Euclidean | 200 | 1403.84 | **1174.94** | 16.31% | 39.3s |
 
 ## 🚀 Quick Start
 
