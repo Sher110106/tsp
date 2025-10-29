@@ -64,8 +64,7 @@ def incremental_writer(tour, cost, output_file, last_cost, threshold=0.003):
 
 
 def solve_tsp(input_file: str, output_file: str, 
-              max_time: float = 300.0, seed: Optional[int] = None,
-              aggressive: bool = False) -> None:
+              max_time: float = 300.0, seed: Optional[int] = None) -> None:
     """
     Main TSP solving pipeline following Task.md guidelines.
     
@@ -119,7 +118,7 @@ def solve_tsp(input_file: str, output_file: str,
     print(f"  Symmetric: {is_symmetric}, Checksum: {checksum:.2f}")
     
     # Initialize time planner
-    timeplan = TimePlan(max_time, n, mode=("aggressive" if aggressive else "normal"))
+    timeplan = TimePlan(max_time, n)
     print(f"\n{timeplan}")
     
     preflight_time = time.time() - preflight_start
@@ -163,7 +162,7 @@ def solve_tsp(input_file: str, output_file: str,
     fast_start = time.time()
     
     # Build candidate lists
-    k = get_candidate_size(n, problem_type == 'EUCLIDEAN', aggressive=aggressive)
+    k = get_candidate_size(n, problem_type == 'EUCLIDEAN')
     candidates = build_candidate_lists(distance_matrix, k)
     print(f"  Built candidate lists (k={k})")
     
@@ -252,22 +251,6 @@ def solve_tsp(input_file: str, output_file: str,
                                                       output_file, last_written_cost)
                 print(f"  Pass {pass_num+1}: New best {best_cost:.2f}")
     
-    # Use any remaining time for continuous polish if aggressive
-    if aggressive:
-        while timeplan.should_continue():
-            improved = two_opt_python_wrapper(best_tour, distance_matrix,
-                                             candidates, max_iters=20000)
-            improved_cost = tour_cost(improved, distance_matrix)
-            if improved_cost < best_cost:
-                best_tour = improved
-                best_cost = improved_cost
-                best_tour_global = best_tour
-                best_cost_global = best_cost
-                last_written_cost = incremental_writer(best_tour, best_cost,
-                                                      output_file, last_written_cost)
-            else:
-                break
-
     parallel_time = time.time() - parallel_start
     print(f"  Parallel restarts completed in {parallel_time:.2f}s")
     
@@ -300,8 +283,6 @@ def main():
                        help="Time limit in seconds (default: 300)")
     parser.add_argument("--seed", type=int, default=None,
                        help="Random seed for reproducibility")
-    parser.add_argument("--aggressive", action="store_true",
-                       help="Use aggressive mode (maximize deep optimization and utilize nearly full time)")
     
     args = parser.parse_args()
     
@@ -310,7 +291,7 @@ def main():
         print(f"ERROR: Input file '{args.input_file}' not found")
         sys.exit(1)
     
-    solve_tsp(args.input_file, args.output_file, args.time, args.seed, args.aggressive)
+    solve_tsp(args.input_file, args.output_file, args.time, args.seed)
 
 
 if __name__ == "__main__":
