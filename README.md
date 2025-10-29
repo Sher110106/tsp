@@ -152,17 +152,17 @@ Key techniques:
 | Instance | Type | Cities | Initial Cost | Final Cost | Improvement | Time |
 |----------|------|--------|--------------|------------|-------------|------|
 | EUCLIDEAN_50 | Euclidean | 50 | 603.88 | **576.22** | 4.58% | 35.0s |
-| EUCLIDEAN_100 | Euclidean | 100 | 938.40 | **829.59** | 11.60% | 35.7s |
-| EUCLIDEAN_200 | Euclidean | 200 | 1227.08 | **1119.17** | 8.79% | 38.7s |
+| EUCLIDEAN_100 | Euclidean | 100 | 938.40 | **825.99** | 11.98% | 35.7s |
+| EUCLIDEAN_200 | Euclidean | 200 | 1227.08 | **1112.83** | 9.31% | 38.7s |
 | NON_EUCLIDEAN_50 | Non-Euclidean | 50 | 755.44 | **618.26** | 18.16% | 35.0s |
-| NON_EUCLIDEAN_100 | Non-Euclidean | 100 | 965.70 | **848.55** | 12.13% | 35.5s |
-| NON_EUCLIDEAN_200 | Non-Euclidean | 200 | 1403.84 | **1199.56** | 14.55% | 39.3s |
+| NON_EUCLIDEAN_100 | Non-Euclidean | 100 | 965.70 | **847.24** | 12.27% | 35.5s |
+| NON_EUCLIDEAN_200 | Non-Euclidean | 200 | 1403.84 | **1174.94** | 16.31% | 39.3s |
 
 ### Performance Analysis
 
 **Success Rate**: 6/6 (100%) - All tests completed successfully
 
-**Average Improvement**: 11.64% from initial construction to final solution
+**Average Improvement**: 12.10% from initial construction to final solution
 
 **Time Efficiency**: All instances solved well under 60-second limit, typically utilizing only ~60% of available time
 
@@ -177,16 +177,16 @@ Key techniques:
 ```
 Initial Seeding:    938.40 (0.27s)
 Fast Local Search:  838.12 (0.43s) → 10.69% improvement
-Deep Optimization:  829.59 (35.0s) → 1.02% additional improvement
-Final Polish:       829.59 (0.03s) → local optimum reached
+Deep Optimization:  825.99 (35.0s) → 1.45% additional improvement
+Final Polish:       825.99 (0.03s) → local optimum reached
 ```
 
 **Non-Euclidean 200 Example:**
 ```
 Initial Seeding:    1403.84 (1.30s)
 Fast Local Search:  1230.52 (2.45s) → 12.35% improvement
-Deep Optimization:  1199.56 (35.4s) → 2.52% additional improvement
-Final Polish:       1199.56 (0.11s) → local optimum reached
+Deep Optimization:  1174.94 (35.4s) → 4.52% additional improvement
+Final Polish:       1174.94 (0.11s) → local optimum reached
 ```
 
 ## 🎯 Usage Examples
@@ -314,12 +314,12 @@ WORLD-CLASS TSP SOLVER v2.0
   → Improvement: 938.40 → 838.12 (10.69%)
 
 [PHASE 3] Deep Optimization (34.9s budget)
-  → Improvement: 838.12 → 829.59 (1.02%)
+  → Improvement: 838.12 → 825.99 (1.45%)
 
 [PHASE 4] Parallel Restarts (7.5s budget)
   Final optimization complete
 
-✓ FINAL SOLUTION: 829.59
+✓ FINAL SOLUTION: 825.99
 ✓ Total time: 35.69s / 60.00s
 ============================================================
 ```
