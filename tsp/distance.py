@@ -125,10 +125,10 @@ def get_candidate_size(n: int, is_euclidean: bool, aggressive: bool = False) -> 
     """
     if is_euclidean:
         base = min(30, max(20, n // 8))
-        return min(40, base + (5 if aggressive else 0))
+        return min(45, base + (10 if aggressive else 0))
     else:
         base = min(40, max(25, n // 6))
-        return min(50, base + (5 if aggressive else 0))
+        return min(55, base + (10 if aggressive else 0))
 
 
 def precompute_distances(coords: np.ndarray) -> np.ndarray:

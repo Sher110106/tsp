@@ -136,9 +136,7 @@ def solve_tsp(input_file: str, output_file: str,
     
     # Generate diverse seeds
     print("  Generating diverse initial tours...")
-    # Increase seeds for larger instances to improve starting quality
-    seed_count = 32 if n >= 200 else 16
-    tours = generate_diverse_seeds(distance_matrix, problem_type, num_seeds=seed_count)
+    tours = generate_diverse_seeds(distance_matrix, problem_type, num_seeds=16)
     
     # Evaluate and sort by cost
     tour_costs = [(tour, tour_cost(tour.tolist(), distance_matrix)) for tour in tours]

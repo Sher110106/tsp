@@ -121,7 +121,7 @@ def iterated_lin_kernighan(tour: List[int],
         
         # Apply perturbation (stronger and repeated for larger n)
         if iteration > 1:
-            strength = 2 if n >= 200 else 1
+            strength = 3 if n >= 200 else 1
             perturbed = double_bridge_kick(current_tour, seed=iteration, strength=strength)
         else:
             perturbed = current_tour.copy()
@@ -129,13 +129,13 @@ def iterated_lin_kernighan(tour: List[int],
         # Intensive 2-opt with more iterations and candidates if available
         if candidates is not None:
             improved = two_opt_python_wrapper(perturbed.tolist(), distance_matrix,
-                                             candidates, max_iters=15000 if n>=200 else 12000)
+                                             candidates, max_iters=20000 if n>=200 else 12000)
         else:
             improved = two_opt_python_wrapper(perturbed.tolist(), distance_matrix,
-                                             max_iters=15000 if n>=200 else 12000)
+                                             max_iters=20000 if n>=200 else 12000)
         
         # More frequent 3-opt for better quality
-        if (n >= 200 and iteration % 3 == 0) or (n < 200 and iteration % 3 == 0):
+        if (n >= 200 and iteration % 2 == 0) or (n < 200 and iteration % 3 == 0):
             improved = three_opt_python_wrapper(improved, distance_matrix)
         
         improved_arr = np.array(improved, dtype=np.int32)
