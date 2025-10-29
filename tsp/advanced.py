@@ -17,7 +17,7 @@ def compute_tour_cost_numba(tour: np.ndarray, dist: np.ndarray) -> float:
     return cost
 
 
-def double_bridge_kick(tour: np.ndarray, seed: int = 0) -> np.ndarray:
+def double_bridge_kick(tour: np.ndarray, seed: int = 0, strength: int = 1) -> np.ndarray:
     """
     Double-bridge perturbation for escaping local optima.
     
@@ -34,20 +34,20 @@ def double_bridge_kick(tour: np.ndarray, seed: int = 0) -> np.ndarray:
     if n < 8:
         return tour.copy()
     
-    # Select 4 cut points
-    positions = np.sort(np.random.choice(n, 4, replace=False))
-    a, b, c, d = positions[0], positions[1], positions[2], positions[3]
-    
-    # Reconnect: [0:a] + [c:d] + [b:c] + [a:b] + [d:n]
-    new_tour = np.concatenate((
-        tour[:a],
-        tour[c:d],
-        tour[b:c],
-        tour[a:b],
-        tour[d:]
-    ))
-    
-    return new_tour
+    current = tour.copy()
+    # Apply multiple kicks to diversify more for large instances
+    num_kicks = max(1, strength)
+    for _ in range(num_kicks):
+        positions = np.sort(np.random.choice(n, 4, replace=False))
+        a, b, c, d = positions[0], positions[1], positions[2], positions[3]
+        current = np.concatenate((
+            current[:a],
+            current[c:d],
+            current[b:c],
+            current[a:b],
+            current[d:]
+        ))
+    return current
 
 
 def sequential_2opt_kicks(tour: np.ndarray, dist: np.ndarray,
@@ -79,7 +79,8 @@ def sequential_2opt_kicks(tour: np.ndarray, dist: np.ndarray,
 def iterated_lin_kernighan(tour: List[int],
                            distance_matrix: np.ndarray,
                            time_limit: float = 60.0,
-                           perturbation_strength: int = 4) -> List[int]:
+                           perturbation_strength: int = 4,
+                           candidates: np.ndarray | None = None) -> List[int]:
     """
     Iterated Lin-Kernighan style optimization.
     
@@ -111,23 +112,30 @@ def iterated_lin_kernighan(tour: List[int],
     
     iteration = 0
     no_improve_count = 0
-    max_no_improve = 100  # Increased for better exploration
+    n = distance_matrix.shape[0]
+    # Allow deeper search for large instances
+    max_no_improve = 200 if n >= 200 else 120
     
     while time.time() - start_time < time_limit and no_improve_count < max_no_improve:
         iteration += 1
         
-        # Apply perturbation
+        # Apply perturbation (stronger and repeated for larger n)
         if iteration > 1:
-            perturbed = double_bridge_kick(current_tour, seed=iteration)
+            strength = 3 if n >= 200 else 1
+            perturbed = double_bridge_kick(current_tour, seed=iteration, strength=strength)
         else:
             perturbed = current_tour.copy()
         
-        # Intensive 2-opt with more iterations
-        improved = two_opt_python_wrapper(perturbed.tolist(), distance_matrix,
-                                         max_iters=10000)
+        # Intensive 2-opt with more iterations and candidates if available
+        if candidates is not None:
+            improved = two_opt_python_wrapper(perturbed.tolist(), distance_matrix,
+                                             candidates, max_iters=20000 if n>=200 else 12000)
+        else:
+            improved = two_opt_python_wrapper(perturbed.tolist(), distance_matrix,
+                                             max_iters=20000 if n>=200 else 12000)
         
         # More frequent 3-opt for better quality
-        if iteration % 3 == 0:
+        if (n >= 200 and iteration % 2 == 0) or (n < 200 and iteration % 3 == 0):
             improved = three_opt_python_wrapper(improved, distance_matrix)
         
         improved_arr = np.array(improved, dtype=np.int32)
@@ -187,7 +195,7 @@ def advanced_k_opt(tour: List[int],
         
         # Apply 2-opt with candidates
         improved = two_opt_python_wrapper(current_tour, distance_matrix,
-                                         candidates, max_iters=10000)
+                                         candidates, max_iters=20000)
         improved_cost = tour_cost(improved, distance_matrix)
         
         if improved_cost < best_cost:
@@ -227,23 +235,23 @@ def multi_level_optimization(tour: List[int],
     
     start_time = time.time()
     
-    # Phase 1: Fast 2-opt (15% of time)
-    phase1_time = time_limit * 0.15
+    # Phase 1: Fast 2-opt (10% of time) to reserve more time for deep LK
+    phase1_time = time_limit * 0.10
     improved = advanced_k_opt(tour, distance_matrix, candidates, phase1_time)
     
-    # Phase 2: Deep LK-style search (70% of time)
-    phase2_time = time_limit * 0.7
+    # Phase 2: Deep LK-style search (80% of remaining time)
+    phase2_time = time_limit * 0.80
     time_remaining = time_limit - (time.time() - start_time)
     phase2_budget = min(phase2_time, time_remaining)
     
     if phase2_budget > 1.0:
-        improved = iterated_lin_kernighan(improved, distance_matrix, phase2_budget)
+        improved = iterated_lin_kernighan(improved, distance_matrix, phase2_budget, candidates=candidates)
     
     # Phase 3: Final polish (remaining time)
     time_remaining = time_limit - (time.time() - start_time)
     if time_remaining > 1.0:
         # Use remaining time for more intensive search
-        improved = iterated_lin_kernighan(improved, distance_matrix, time_remaining)
+        improved = iterated_lin_kernighan(improved, distance_matrix, time_remaining, candidates=candidates)
     
     return improved
 
