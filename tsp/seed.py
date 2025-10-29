@@ -264,8 +264,13 @@ def generate_diverse_seeds(distance_matrix: np.ndarray,
     
     # 3. Multiple α-Random NN with varying alpha values
     if len(tours) < num_seeds:
-        alpha_values = [0.15, 0.25, 0.35, 0.5]
-        seeds_list = [42, 123, 456, 789]
+        # Bias to tighter alpha for large non-euclidean to improve quality
+        if problem_type == 'NON-EUCLIDEAN' and n >= 200:
+            alpha_values = [0.10, 0.15, 0.20, 0.25, 0.30]
+            seeds_list = [42, 123, 456, 789, 2025]
+        else:
+            alpha_values = [0.15, 0.25, 0.35, 0.5]
+            seeds_list = [42, 123, 456, 789]
         for alpha, seed_val in zip(alpha_values, seeds_list):
             if len(tours) >= num_seeds:
                 break
@@ -276,6 +281,9 @@ def generate_diverse_seeds(distance_matrix: np.ndarray,
     if len(tours) < num_seeds:
         tour = farthest_insertion_numba(distance_matrix)
         tours.append(tour)
+        # Add a reversed variant to diversify edges for large non-euclidean
+        if problem_type == 'NON-EUCLIDEAN' and n >= 200 and len(tours) < num_seeds:
+            tours.append(tour[::-1])
     
     # 5. More diverse NN starts with different seeds
     seed_counter = 1000

@@ -128,6 +128,8 @@ def get_candidate_size(n: int, is_euclidean: bool, aggressive: bool = False) -> 
         return min(40, base + (5 if aggressive else 0))
     else:
         base = min(40, max(25, n // 6))
+        if n >= 200:
+            return min(52, base + (8 if aggressive else 4))
         return min(50, base + (5 if aggressive else 0))
 
 

@@ -80,7 +80,8 @@ def iterated_lin_kernighan(tour: List[int],
                            distance_matrix: np.ndarray,
                            time_limit: float = 60.0,
                            perturbation_strength: int = 4,
-                           candidates: np.ndarray | None = None) -> List[int]:
+                           candidates: np.ndarray | None = None,
+                           problem_type: str | None = None) -> List[int]:
     """
     Iterated Lin-Kernighan style optimization.
     
@@ -114,7 +115,7 @@ def iterated_lin_kernighan(tour: List[int],
     no_improve_count = 0
     n = distance_matrix.shape[0]
     # Allow deeper search for large instances
-    max_no_improve = 200 if n >= 200 else 120
+    max_no_improve = 220 if n >= 200 else 120
     
     while time.time() - start_time < time_limit and no_improve_count < max_no_improve:
         iteration += 1
@@ -135,7 +136,7 @@ def iterated_lin_kernighan(tour: List[int],
                                              max_iters=15000 if n>=200 else 12000)
         
         # More frequent 3-opt for better quality
-        if (n >= 200 and iteration % 3 == 0) or (n < 200 and iteration % 3 == 0):
+        if (problem_type == 'NON-EUCLIDEAN' and iteration % 2 == 0) or (problem_type != 'NON-EUCLIDEAN' and iteration % 3 == 0):
             improved = three_opt_python_wrapper(improved, distance_matrix)
         
         improved_arr = np.array(improved, dtype=np.int32)
@@ -218,7 +219,8 @@ def advanced_k_opt(tour: List[int],
 def multi_level_optimization(tour: List[int],
                             distance_matrix: np.ndarray,
                             candidates: np.ndarray,
-                            time_limit: float = 100.0) -> List[int]:
+                            time_limit: float = 100.0,
+                            problem_type: str | None = None) -> List[int]:
     """
     Multi-level optimization combining multiple strategies.
     
@@ -245,13 +247,13 @@ def multi_level_optimization(tour: List[int],
     phase2_budget = min(phase2_time, time_remaining)
     
     if phase2_budget > 1.0:
-        improved = iterated_lin_kernighan(improved, distance_matrix, phase2_budget, candidates=candidates)
+        improved = iterated_lin_kernighan(improved, distance_matrix, phase2_budget, candidates=candidates, problem_type=problem_type)
     
     # Phase 3: Final polish (remaining time)
     time_remaining = time_limit - (time.time() - start_time)
     if time_remaining > 1.0:
         # Use remaining time for more intensive search
-        improved = iterated_lin_kernighan(improved, distance_matrix, time_remaining, candidates=candidates)
+        improved = iterated_lin_kernighan(improved, distance_matrix, time_remaining, candidates=candidates, problem_type=problem_type)
     
     return improved
 
