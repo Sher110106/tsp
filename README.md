@@ -153,16 +153,16 @@ Key techniques:
 |----------|------|--------|--------------|------------|-------------|------|
 | EUCLIDEAN_50 | Euclidean | 50 | 603.88 | **576.22** | 4.58% | 35.0s |
 | EUCLIDEAN_100 | Euclidean | 100 | 938.40 | **825.99** | 11.98% | 35.7s |
-| EUCLIDEAN_200 | Euclidean | 200 | 1227.08 | **1103.01** | 10.11% | 38.7s |
+| EUCLIDEAN_200 | Euclidean | 200 | 1227.08 | **1112.83** | 9.31% | 38.7s |
 | NON_EUCLIDEAN_50 | Non-Euclidean | 50 | 755.44 | **618.26** | 18.16% | 35.0s |
-| NON_EUCLIDEAN_100 | Non-Euclidean | 100 | 965.70 | **846.47** | 12.35% | 35.5s |
-| NON_EUCLIDEAN_200 | Non-Euclidean | 200 | 1403.84 | **1155.39** | 17.70% | 39.3s |
+| NON_EUCLIDEAN_100 | Non-Euclidean | 100 | 965.70 | **847.24** | 12.27% | 35.5s |
+| NON_EUCLIDEAN_200 | Non-Euclidean | 200 | 1403.84 | **1174.94** | 16.31% | 39.3s |
 
 ### Performance Analysis
 
 **Success Rate**: 6/6 (100%) - All tests completed successfully
 
-**Average Improvement**: 12.48% from initial construction to final solution
+**Average Improvement**: 12.10% from initial construction to final solution
 
 **Time Efficiency**: All instances solved well under 60-second limit, typically utilizing only ~60% of available time
 
@@ -185,8 +185,8 @@ Final Polish:       825.99 (0.03s) → local optimum reached
 ```
 Initial Seeding:    1403.84 (1.30s)
 Fast Local Search:  1230.52 (2.45s) → 12.35% improvement
-Deep Optimization:  1155.39 (35.4s) → 6.11% additional improvement
-Final Polish:       1155.39 (0.11s) → local optimum reached
+Deep Optimization:  1174.94 (35.4s) → 4.52% additional improvement
+Final Polish:       1174.94 (0.11s) → local optimum reached
 ```
 
 ## 🎯 Usage Examples
